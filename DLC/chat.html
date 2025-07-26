@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>AI Chat - Digital Literacy</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <header>
+    <h1>AI Chat Support</h1>
+    <nav>
+      <a href="index.html">Home</a>
+      <a href="tutorials.html">Tutorials</a>
+      <a href="chat.html">AI Chat</a>
+      <a href="feedback.html">Feedback</a>
+    </nav>
+  </header>
+
+  <main>
+    <div class="chat-container">
+      <div id="chatBox" class="chat-box"></div>
+
+      <div class="chat-controls">
+        <input type="text" id="userInput" class="chat-input" placeholder="Type your question..." />
+        <button class="btn-send" onclick="sendMessage()">Send</button>
+      </div>
+
+      <div class="language-select">
+        <label for="language">Language:</label>
+        <select id="language">
+          <option value="english">English</option>
+          <option value="hindi">Hindi</option>
+        </select>
+      </div>
+    </div>
+  </main>
+
+  <script>
+    async function sendMessage() {
+      const input = document.getElementById("userInput");
+      const userText = input.value.trim();
+      const lang = document.getElementById("language").value;
+      if (!userText) return;
+
+      const chatBox = document.getElementById("chatBox");
+      chatBox.innerHTML += `<div class="user-message">${userText}</div>`;
+      input.value = "";
+      chatBox.scrollTop = chatBox.scrollHeight;
+
+      const res = await fetch("http://localhost:3000/chat", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ message: userText, language: lang })
+      });
+
+      const data = await res.json();
+      chatBox.innerHTML += `<div class="bot-message">${data.reply}</div>`;
+      chatBox.scrollTop = chatBox.scrollHeight;
+    }
+  </script>
+</body>
+</html>
